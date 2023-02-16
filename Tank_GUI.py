@@ -7,13 +7,11 @@ Created on Thu Jan 26 18:25:24 2023
 
 from tkinter import *
 import tkinter.font as font
-# import random
-# from PIL import ImageTk, Image
 from itertools import count
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-# import numpy
+from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -54,6 +52,8 @@ def set_freq_value(): #Sets the new freq when enter button is pressed
     selection_index = selection_tuple[0]
     freq = selection_index
     print(freq)
+    volt = dac_ops.find_voltage(freq) #Creates corresponding voltage and writes to DAC (change to diff func later)
+    dac_ops.dac_write(volt)
     
 def set_amp_value(): #Sets the new freq when enter button is pressed
     selection_tuple = amp_listbox.curselection()
