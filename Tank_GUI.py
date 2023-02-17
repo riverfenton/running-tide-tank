@@ -4,14 +4,15 @@ Created on Thu Jan 26 18:25:24 2023
 
 @author: rfent
 """
-
+import tkinter
 from tkinter import *
+from tkinter import ttk
 import tkinter.font as font
 from itertools import count
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from dac import dac_ops
+#from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -28,10 +29,6 @@ def animate(i):
     x = data['x_value']
     y1 = data['total_1']
     y2 = data['total_2']
-
-    # x=pd.Series.to_series(x)
-    # y1=pd.Series.to_series(y1)
-    # y2=pd.Series.to_series(y2)
 
     plt.cla()
 
@@ -63,49 +60,61 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
 
 def amp_and_freq_w():
     global freq_listbox, amp_listbox
+    
     ########## Making the freq and amp input window ############
-    freq_and_amp_w = Toplevel(root)
-      
-    ############ Freq Scrollbar creation and labeling ################
-    freq_frame = Frame(freq_and_amp_w)
+    freq_and_amp_w = Toplevel(root, bg="#6CD300")
+    
+    freq_and_amp_w_width= freq_and_amp_w.winfo_screenwidth()
+    freq_and_amp_w_height= freq_and_amp_w.winfo_screenheight()
+    freq_and_amp_w.geometry("%dx%d" % (freq_and_amp_w_width, freq_and_amp_w_height))
+    
+    ############ Freq Scrollbar/Listbox creation and labeling ################
+    style=ttk.Style()
+    style.theme_use('classic')
+    style.configure("Vertical.TScrollbar", background="#D2FA04", bordercolor="green", troughcolor="#020202", width=130)
+    
+    freq_frame = Frame(freq_and_amp_w, height=freq_and_amp_w_height, width=15, bg="#6CD300")
 
-    freq_scrollbar = Scrollbar(freq_frame, orient='vertical')
+    l1 = Label(freq_and_amp_w, text = "Select desired frequency, then press enter.", font=freq_title_font, bg="#D2FA04")
+    l1.pack(side=TOP, pady=25)
 
-    freq_listbox = Listbox(freq_frame, selectmode=SINGLE, width=50, yscrollcommand=freq_scrollbar.set)
-    freq_listbox.pack(side = LEFT, fill = BOTH)
+    freq_enter = Button(freq_and_amp_w, text = "Enter", font=enter_font, width=12,
+                 height=1, bg = "#D2FA04", fg = "black", command=set_freq_value)
+    freq_enter.pack(side=tkinter.RIGHT, padx=400)
+
+    freq_listbox = Listbox(freq_frame, activestyle=NONE, selectmode=SINGLE, selectbackground="#D2FA04", font=listbox_font, width=12, height=11 )
+    freq_scrollbar = ttk.Scrollbar(freq_frame, orient='vertical', command=freq_listbox.yview)
+    freq_listbox.configure(yscrollcommand=freq_scrollbar.set)
+    freq_listbox.pack(side = LEFT, fill = BOTH, pady=5)
       
-    freq_scrollbar.pack(side = RIGHT, fill = Y)
+    freq_scrollbar.pack(side = RIGHT, fill = Y, pady=5)
     freq_frame.pack()
-    l1 = Label(freq_and_amp_w, text = "Select Desired Frequency")
-    l1.pack()
 
-    freq_enter = Button(freq_and_amp_w, text = "Enter", width=15,
-                 height=2, bg = "#6CD300", fg = "black", command=set_freq_value)
-    freq_enter.pack()
 
     for values in range(100):
         freq_listbox.insert(END, values)
         
+    freq_scrollbar.config(command=freq_listbox.yview)
     ############ Amp Scrollbar creation and labeling ################
       
-    amp_frame = Frame(freq_and_amp_w)
+    # amp_frame = Frame(freq_and_amp_w)
 
-    amp_scrollbar = Scrollbar(amp_frame, orient='vertical')
+    # amp_scrollbar = Scrollbar(amp_frame, orient='vertical')
 
-    amp_listbox = Listbox(amp_frame, selectmode=SINGLE, width=50, yscrollcommand=amp_scrollbar.set)
-    amp_listbox.pack(side = LEFT, fill = BOTH)
+    # amp_listbox = Listbox(amp_frame, selectmode=SINGLE, width=50, yscrollcommand=amp_scrollbar.set)
+    # amp_listbox.pack(side = LEFT, fill = BOTH)
       
-    amp_scrollbar.pack(side = RIGHT, fill = Y)
-    amp_frame.pack()
-    l2 = Label(freq_and_amp_w, text = "Select Desired Amplitude")
-    l2.pack()
+    # amp_scrollbar.pack(side = RIGHT, fill = Y)
+    # amp_frame.pack()
+    # l2 = Label(freq_and_amp_w, text = "Select Desired Amplitude")
+    # l2.pack()
 
-    amp_enter = Button(freq_and_amp_w, text = "Enter", width=15,
-                 height=2, bg = "#6CD300", fg = "black", command=set_amp_value)
-    amp_enter.pack()
+    # amp_enter = Button(freq_and_amp_w, text = "Enter", width=15,
+    #              height=2, bg = "#6CD300", fg = "black", command=set_amp_value)
+    # amp_enter.pack()
 
-    for values in range(100):
-        amp_listbox.insert(END, values)
+    # for values in range(100):
+    #     amp_listbox.insert(END, values)
         
 def resize(e): #Resizes buttons and their fonts when window size changes
      
@@ -158,13 +167,18 @@ s_width= root.winfo_screenwidth()
 s_height= root.winfo_screenheight()
 root.geometry("%dx%d" % (s_width, s_height))
 
-#Setting up font for buttons/labels/etc.
+#Setting up fonts for buttons/labels/etc.
 runningTideFont = font.Font(family='Helvetica Neue', size=40, weight='bold')
- 
+listbox_font = font.Font(family='Helvetica Neue', size=45, weight='bold')
+enter_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
+freq_title_font = font.Font(family='Helvetica Neue', size=30, weight='bold')
+
+############ Making Buttons ####################
+
 plot = Button(root, text = "Plot", font= runningTideFont, width= 115,
              height= 26, bg = "#6CD300", fg = "black", command=test)
 
-input_freq_amp = Button(root, text = "Input Frequency/Amplitude", font= runningTideFont, width= 115,
+input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=amp_and_freq_w)
 
 update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Specs", font= runningTideFont, width= 115,
