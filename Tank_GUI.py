@@ -71,24 +71,32 @@ def amp_and_freq_w():
     ############ Freq Scrollbar/Listbox creation and labeling ################
     style=ttk.Style()
     style.theme_use('classic')
-    style.configure("Vertical.TScrollbar", background="#D2FA04", bordercolor="green", troughcolor="#020202", width=130)
+    style.configure("Vertical.TScrollbar", arrowsize=50, background="#D2FA04", bordercolor="green", troughcolor="#020202", width=130)
     
-    freq_frame = Frame(freq_and_amp_w, height=freq_and_amp_w_height, width=15, bg="#6CD300")
+    #Setting up frames and their layouts
+    freq_frame = Frame(freq_and_amp_w, bg="#6CD300")
+    buttons_frame = Frame(freq_and_amp_w, bg="#6CD300")
+    
+    freq_frame.grid(row=0, column=0, padx=50, pady=10, ipadx=5, ipady=5)
+    buttons_frame.grid(row=0, column=1, padx=20, pady=5)
 
-    l1 = Label(freq_and_amp_w, text = "Select desired frequency, then press enter.", font=freq_title_font, bg="#D2FA04")
-    l1.pack(side=TOP, pady=25)
+    #Creating directions as well as enter and back button
+    l1 = Label(freq_frame, text = "Select desired frequency, then press enter.", font=freq_title_font, bg="#6CD300", height=2)
+    l1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5)
 
-    freq_enter = Button(freq_and_amp_w, text = "Enter", font=enter_font, width=12,
-                 height=1, bg = "#D2FA04", fg = "black", command=set_freq_value)
-    freq_enter.pack(side=tkinter.RIGHT, padx=400)
+    freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command=set_freq_value)
+    freq_enter.grid(row=0, column=0)
+    
+    freq_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
+    freq_back.grid(row=1, column=0, sticky='ew')
 
-    freq_listbox = Listbox(freq_frame, activestyle=NONE, selectmode=SINGLE, selectbackground="#D2FA04", font=listbox_font, width=12, height=11 )
+    freq_listbox = Listbox(freq_frame, activestyle=NONE, selectmode=SINGLE, selectbackground="#D2FA04", font=listbox_font, height= 13)
     freq_scrollbar = ttk.Scrollbar(freq_frame, orient='vertical', command=freq_listbox.yview)
     freq_listbox.configure(yscrollcommand=freq_scrollbar.set)
-    freq_listbox.pack(side = LEFT, fill = BOTH, pady=5)
+    freq_listbox.grid(row=1, column=0, padx=5, pady=5, ipadx=5, ipady=5)
       
-    freq_scrollbar.pack(side = RIGHT, fill = Y, pady=5)
-    freq_frame.pack()
+    freq_scrollbar.grid(row=1, column=1, sticky='ns')
+    freq_scrollbar.config(command=freq_listbox.yview)
 
 
     for values in range(100):
@@ -171,7 +179,8 @@ root.geometry("%dx%d" % (s_width, s_height))
 runningTideFont = font.Font(family='Helvetica Neue', size=40, weight='bold')
 listbox_font = font.Font(family='Helvetica Neue', size=45, weight='bold')
 enter_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
-freq_title_font = font.Font(family='Helvetica Neue', size=30, weight='bold')
+back_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
+freq_title_font = font.Font(family='Helvetica Neue', size=32, weight='bold')
 
 ############ Making Buttons ####################
 
