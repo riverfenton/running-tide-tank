@@ -45,12 +45,17 @@ def test():
     plt.show()
     
 def set_freq_value(): #Sets the new freq when enter button is pressed
+    global freq
     selection_tuple = freq_listbox.curselection()
     selection_index = selection_tuple[0]
     freq = selection_index
     print(freq)
-    volt = dac_ops.find_voltage(freq) #Creates corresponding voltage and writes to DAC (change to diff func later)
-    dac_ops.dac_write(volt)
+    update_run_button()
+    #volt = dac_ops.find_voltage(freq) #Creates corresponding voltage and writes to DAC (change to diff func later)
+    #dac_ops.dac_write(volt)
+    
+def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
+    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)"
     
 def set_amp_value(): #Sets the new freq when enter button is pressed
     selection_tuple = amp_listbox.curselection()
@@ -84,7 +89,7 @@ def amp_and_freq_w():
     l1 = Label(freq_frame, text = "Select desired frequency, then press enter.", font=freq_title_font, bg="#6CD300", height=2)
     l1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5)
 
-    freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command=set_freq_value)
+    freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value()])
     freq_enter.grid(row=0, column=0)
     
     freq_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
@@ -193,7 +198,7 @@ input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runn
 update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Specs", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=test)
 
-run_tank = Button(root, text = "Run Tank", font= runningTideFont, width= 115,
+run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=test)
 
 # set Button grid
