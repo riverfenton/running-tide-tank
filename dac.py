@@ -6,9 +6,12 @@ import adafruit_mcp4725
 class dac_ops:
     
     def find_voltage(freq):
-        return freq
+        max_rpm=4000/46
+        out_v=freq/max_rpm*4096
+        out_v=out_v*10/6.66
+        return out_v
 
-    def dac_write(volt):
+    def dac_write(freq):
         # Initialize I2C bus.
         i2c = busio.I2C(board.SCL, board.SDA)
 
@@ -23,9 +26,6 @@ class dac_ops:
         # DAC so quantization errors will occur.  The range of
         # values is 0 (minimum/ground) to 65535 (maximum/Vout).
 
-        dac.raw_value = 4095  # Use the raw_value property to directly read and write
-        # the 12-bit DAC value.  The range of values is
-        # 0 (minimum/ground) to 4095 (maximum/Vout).
 
         dac.normalized_value = 1.0  # Use the normalized_value property to set the
         # output with a floating point value in the range
@@ -33,6 +33,8 @@ class dac_ops:
         # maximum/Vout.
 
         # Main loop will go up and down through the range of DAC values forever.
+        out_v=dac_ops.find_voltage(freq)
+        dac.raw_value =  out_v
+        print(out_v)
+
         
-        dac.raw_value = volt
-        print(volt)

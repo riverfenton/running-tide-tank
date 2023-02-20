@@ -12,7 +12,7 @@ from itertools import count
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-#from dac import dac_ops
+from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -51,8 +51,8 @@ def set_freq_value(): #Sets the new freq when enter button is pressed
     freq = selection_index
     print(freq)
     update_run_button()
-    #volt = dac_ops.find_voltage(freq) #Creates corresponding voltage and writes to DAC (change to diff func later)
-    #dac_ops.dac_write(volt)
+    volt = dac_ops.find_voltage(freq) #Creates corresponding voltage and writes to DAC (change to diff func later)
+    dac_ops.dac_write(volt)
     
 def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)"
