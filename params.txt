@@ -1,0 +1,6 @@
+Water Height: 0.47 (m)
+Full Tank Length: 2.41 (m)
+Track Length: 1.00 (m)
+Number of Length Settings: 30
+Minimum Normal Mode: 2
+Maximum Normal Mode: 5
