@@ -65,12 +65,28 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
     selection_index = selection_tuple[0]
     amp = selection_index
     print(amp)
+    
+def read_nLf():
+    #Creates CSV of allowed frequencies
+    create_csv
+    mode_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[0])
+    mode_list=mode_list.values.tolist()
+    
+    length_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[1])
+    #length_list=mode_list.values.tolist()
+    
+    freq_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[2])
+    freq_list=round(freq_list, 2)
+    freq_list=freq_list.values.tolist()
+    
+    return freq_list, mode_list, length_list
 
-def amp_and_freq_w():
+def amp_and_freq_w(freq_or_amp,list_values):
     global freq_listbox, amp_listbox
     
     ########## Making the freq and amp input window ############
     freq_and_amp_w = Toplevel(root, bg="#6CD300")
+    
     
     freq_and_amp_w_width= freq_and_amp_w.winfo_screenwidth()
     freq_and_amp_w_height= freq_and_amp_w.winfo_screenheight()
@@ -87,9 +103,10 @@ def amp_and_freq_w():
     
     freq_frame.grid(row=0, column=0, padx=50, pady=10, ipadx=5, ipady=5)
     buttons_frame.grid(row=0, column=1, padx=20, pady=5)
-
+    
     #Creating directions as well as enter and back button
-    l1 = Label(freq_frame, text = "Select desired frequency, then press enter.", font=freq_title_font, bg="#6CD300", height=2)
+    titlestr="Select desired " + freq_or_amp + ", then press enter."
+    l1 = Label(freq_frame, text = titlestr, font=freq_title_font, bg="#6CD300", height=2)
     l1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5)
 
     freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value()])
@@ -106,12 +123,12 @@ def amp_and_freq_w():
     freq_scrollbar.grid(row=1, column=1, sticky='ns')
     freq_scrollbar.config(command=freq_listbox.yview)
 
-    freq_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[2])
-    freq_list=round(freq_list, 2)
-    freq_list=freq_list.values.tolist()
+    # freq_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[2])
+    # freq_list=round(freq_list, 2)
+    # freq_list=freq_list.values.tolist()
 
     #Populating freq listbox
-    for value in freq_list:
+    for value in list_values:
         freq_listbox.insert(END, value)        
     freq_scrollbar.config(command=freq_listbox.yview)
     ############ Amp Scrollbar creation and labeling ################
@@ -193,13 +210,15 @@ enter_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
 back_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
 freq_title_font = font.Font(family='Helvetica Neue', size=32, weight='bold')
 
+[freq_list, mode_list, length_list]=read_nLf()
+
 ############ Making Buttons ####################
 
 plot = Button(root, text = "Plot", font= runningTideFont, width= 115,
              height= 26, bg = "#6CD300", fg = "black", command=test)
 
 input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runningTideFont, width= 115,
-                        height= 26, bg = "#6CD300", fg = "black", command=amp_and_freq_w)
+                        height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency',freq_list)])
 
 update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Specs", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=test)
