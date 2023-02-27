@@ -69,13 +69,13 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
 def read_nLf():
     #Creates CSV of allowed frequencies
     create_csv
-    mode_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[0])
+    mode_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[0])
     mode_list=mode_list.values.tolist()
     
-    length_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[1])
+    length_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[1])
     #length_list=mode_list.values.tolist()
     
-    freq_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[2])
+    freq_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[2])
     freq_list=round(freq_list, 2)
     freq_list=freq_list.values.tolist()
     
@@ -101,8 +101,8 @@ def amp_and_freq_w(freq_or_amp,list_values):
     freq_frame = Frame(freq_and_amp_w, bg="#6CD300")
     buttons_frame = Frame(freq_and_amp_w, bg="#6CD300")
     
-    freq_frame.grid(row=0, column=0, padx=50, pady=10, ipadx=5, ipady=5)
-    buttons_frame.grid(row=0, column=1, padx=20, pady=5)
+    freq_frame.grid(row=0, column=0, padx=20, pady=10, ipadx=1, ipady=5)
+    buttons_frame.grid(row=0, column=1, padx=5, pady=5)
     
     #Creating directions as well as enter and back button
     titlestr="Select desired " + freq_or_amp + ", then press enter."
@@ -218,7 +218,7 @@ plot = Button(root, text = "Plot", font= runningTideFont, width= 115,
              height= 26, bg = "#6CD300", fg = "black", command=test)
 
 input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runningTideFont, width= 115,
-                        height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency',freq_list)])
+                        height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency (rpm)',freq_list)])
 
 update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Specs", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=test)
