@@ -33,4 +33,4 @@ indcs=np.argsort(nLfA[:,2]) #find the indices that sort nLf according to freq
 nLfA_sorted=np.empty_like(nLfA)
 nLfA_sorted[:,:]=nLfA[indcs,:]
 
-np.savetxt('nLfA_sorted.csv',nLfA_sorted,delimiter=',')
+np.savetxt('nLfA_sort.csv',nLfA_sorted,delimiter=',')

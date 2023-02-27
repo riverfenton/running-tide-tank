@@ -12,7 +12,9 @@ from itertools import count
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from dac import dac_ops
+import create_nLf_LUT as create_csv
+
+#from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -48,11 +50,12 @@ def set_freq_value(): #Sets the new freq when enter button is pressed
     global freq
     selection_tuple = freq_listbox.curselection()
     selection_index = selection_tuple[0]
-    freq = selection_index
+    freq_tuple = freq_listbox.get(selection_index)
+    freq = float(freq_tuple[0])
     print(freq)
     update_run_button()
     
-    dac_ops.dac_write(freq)
+    #dac_ops.dac_write(freq)
     
 def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)"
@@ -103,10 +106,13 @@ def amp_and_freq_w():
     freq_scrollbar.grid(row=1, column=1, sticky='ns')
     freq_scrollbar.config(command=freq_listbox.yview)
 
+    freq_list = pd.read_csv('nLfA_sorted.CSV', header=None, usecols=[2])
+    freq_list=round(freq_list, 2)
+    freq_list=freq_list.values.tolist()
 
-    for values in range(100):
-        freq_listbox.insert(END, values)
-        
+    #Populating freq listbox
+    for value in freq_list:
+        freq_listbox.insert(END, value)        
     freq_scrollbar.config(command=freq_listbox.yview)
     ############ Amp Scrollbar creation and labeling ################
       
