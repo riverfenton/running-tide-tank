@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import create_nLf_LUT as create_csv
-#from dac import dac_ops
+from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -54,8 +54,6 @@ def set_freq_value(length_list): #Sets the new freq when enter button is pressed
     print(freq)
     update_run_button()
     
-    #dac_ops.dac_write(freq)
-    
 def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(tank_len) + "m"
     
@@ -67,6 +65,9 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
     amp = float(amp_tuple[0])
     print(amp)
     update_run_button()
+    
+def turn_motor_on(f):
+    dac_ops.dac_write(f)
     
 def update_long_params():
     global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var, freq_list, mode_list, length_list
@@ -293,8 +294,8 @@ freq_title_font = font.Font(family='Helvetica Neue', size=32, weight='bold')
 
 ############ Making Buttons ####################
 
-plot = Button(root, text = "Stop Tank", font= runningTideFont, width= 115,
-             height= 26, bg = "#6CD300", fg = "red", command=test)
+stop = Button(root, text = "Stop Tank", font= runningTideFont, width= 115,
+             height= 26, bg = "#6CD300", fg = "red", command= lambda: [turn_motor_on(0)])
 
 input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency (rpm)',freq_list)])
@@ -303,7 +304,7 @@ update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Spec
                         height= 26, bg = "#6CD300", fg = "black", command=update_long_params_w)
 
 run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(tank_len) + "m", font= runningTideFont, width= 115,
-                        height= 26, bg = "#6CD300", fg = "black", command=test)
+                        height= 26, bg = "#6CD300", fg = "black", command= lambda: [turn_motor_on(freq)])
 
 # set Button grid
 plot.grid(column=1, row=1, sticky="NSEW" )
