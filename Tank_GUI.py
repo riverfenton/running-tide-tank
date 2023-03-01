@@ -21,6 +21,7 @@ index = count()
 
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
+tank_len=0 #default length
 
 def animate(i):
     data = pd.read_csv('data.csv')
@@ -42,19 +43,21 @@ def test():
     plt.tight_layout()
     plt.show()
     
-def set_freq_value(): #Sets the new freq when enter button is pressed
-    global freq
+def set_freq_value(length_list): #Sets the new freq when enter button is pressed
+    global freq, tank_len
     selection_tuple = freq_listbox.curselection()
     selection_index = selection_tuple[0]
     freq_tuple = freq_listbox.get(selection_index)
     freq = float(freq_tuple[0])
+    tank_len=length_list[selection_index]
+    tank_len=round(tank_len[0],2)
     print(freq)
     update_run_button()
     
     #dac_ops.dac_write(freq)
     
 def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
-    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)"
+    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(tank_len) + "m"
     
 def set_amp_value(): #Sets the new freq when enter button is pressed
     global amp
@@ -65,6 +68,30 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
     print(amp)
     update_run_button()
     
+def update_long_params():
+    global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var, freq_list, mode_list, length_list
+    water_height = str(water_height_var.get())
+    tank_length = str(tank_length_var.get())
+    track_length = str(track_length_var.get())
+    num_length_settings = str(num_length_settings_var.get())
+    min_modes = str(min_modes_var.get())
+    max_modes = str(max_modes_var.get())
+    
+    params_list = [water_height, tank_length, track_length, num_length_settings, min_modes, max_modes]
+    print(water_height)
+    print(tank_length)
+    print(track_length)
+    print(num_length_settings)
+    print(min_modes)
+    print(max_modes)
+    
+    f= open("params_test.txt","w+")
+    for param in params_list:
+        f.write(param + '\n')
+    
+    f.close()
+    [freq_list, mode_list, length_list]=read_nLf()
+    
 def read_nLf():
     #Creates CSV of allowed frequencies
     create_csv
@@ -72,7 +99,7 @@ def read_nLf():
     mode_list=mode_list.values.tolist()
     
     length_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[1])
-    #length_list=mode_list.values.tolist()
+    length_list=length_list.values.tolist()
     
     freq_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[2])
     freq_list=round(freq_list, 2)
@@ -84,47 +111,69 @@ def read_nLf():
 #long term parameters
 [freq_list, mode_list, length_list]=read_nLf()
 
-def update_long_params():
+def update_long_params_w():
+    global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var
     update_w = Toplevel(root, bg="#6CD300")
     
     update_w_width = update_w.winfo_screenwidth()
     update_w_height= update_w.winfo_screenheight()
     update_w.geometry("%dx%d" % (update_w_width, update_w_height))
       
-    # declaring int variable
-    # for storing name and password
-    name_var = IntVar()
-    passw_var = IntVar()
-     
-    #name=name_var.get()
-    #password=passw_var.get()
+    #Creating long-term variables to store user inputs
+    water_height_var = StringVar()
+    tank_length_var = StringVar()
+    track_length_var = StringVar()
+    num_length_settings_var = StringVar()
+    min_modes_var = StringVar()
+    max_modes_var = StringVar()
          
-    # creating a label for
-    # name using widget Label
-    name_label = tk.Label(root, text = 'Username', font=('calibre',10, 'bold'))
+    params_frame = Frame(update_w, bg='#6CD300')
+    params_frame.grid(row=0, column=0, columnspan=2, rowspan=6, sticky='news')
+    
+    # Creating entries for user input and labels for each
+    height_label = Label(params_frame, text = 'Still Water Height', font=('calibre',10, 'bold'))
+    height_entry = Entry(params_frame, textvariable = water_height_var, font=('calibre',10,'normal'))
       
-    # creating a entry for input
-    # name using widget Entry
-    name_entry = tk.Entry(root,textvariable = name_var, font=('calibre',10,'normal'))
+    tank_l_label = Label(params_frame, text = 'Full Tank Length', font = ('calibre',10,'bold'))
+    tank_l_entry = Entry(params_frame, textvariable = tank_length_var, font = ('calibre',10,'normal'))
+    
+    track_l_label = Label(params_frame, text = 'Track Length', font=('calibre',10, 'bold'))
+    track_l_entry = Entry(params_frame, textvariable = track_length_var, font=('calibre',10,'normal'))
       
-    # creating a label for password
-    passw_label = tk.Label(root, text = 'Password', font = ('calibre',10,'bold'))
+    num_length_settings_label = Label(params_frame, text = '# of Length Settings', font = ('calibre',10,'bold'))
+    num_length_settings_entry = Entry(params_frame, textvariable = num_length_settings_var, font = ('calibre',10,'normal'))
+    
+    min_modes_label = Label(params_frame, text = 'Min # of Normal Modes', font=('calibre',10, 'bold'))
+    min_modes_entry = Entry(params_frame, textvariable = min_modes_var, font=('calibre',10,'normal'))
       
-    # creating a entry for password
-    passw_entry=tk.Entry(root, textvariable = passw_var, font = ('calibre',10,'normal'), show = '*')
+    max_modes_label = Label(params_frame, text = 'Max # of Normal Modes', font = ('calibre',10,'bold'))
+    max_modes_entry = Entry(params_frame, textvariable = max_modes_var, font = ('calibre',10,'normal'))
+    
       
     # creating a button using the widget
     # Button that will call the submit function
-    sub_btn=tk.Button(root,text = 'Submit', command = submit)
+    sub_btn= Button(params_frame,text = 'Submit', command = update_long_params)
       
     # placing the label and entry in
     # the required position using grid
     # method
-    name_label.grid(row=0,column=0)
-    name_entry.grid(row=0,column=1)
-    passw_label.grid(row=1,column=0)
-    passw_entry.grid(row=1,column=1)
-    sub_btn.grid(row=2,column=1)
+    height_label.grid(row=0,column=0)
+    height_entry.grid(row=0,column=1)
+    tank_l_label.grid(row=1,column=0)
+    tank_l_entry.grid(row=1,column=1)
+    track_l_label.grid(row=2,column=0)
+    track_l_entry.grid(row=2,column=1)
+    num_length_settings_label.grid(row=3,column=0)
+    num_length_settings_entry.grid(row=3,column=1)
+    min_modes_label.grid(row=4,column=0)
+    min_modes_entry.grid(row=4,column=1)
+    max_modes_label.grid(row=5,column=0)
+    max_modes_entry.grid(row=5,column=1)
+    
+    sub_btn.grid(row=6,column=1, sticky='news')
+    
+    update_w.columnconfigure(0, weight=1)
+    update_w.rowconfigure(0, weight=1)
 
 def amp_and_freq_w(freq_or_amp, list_values):
     global freq_listbox, amp_listbox, freq_list, mode_list, length_list
@@ -155,7 +204,7 @@ def amp_and_freq_w(freq_or_amp, list_values):
     l1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5)
 
     if freq_or_amp == 'frequency (rpm)':
-        freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value(), amp_and_freq_w('amplitude (in)', freq_list)])
+        freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value(length_list), amp_and_freq_w('amplitude (in)', freq_list)])
         freq_enter.grid(row=0, column=0)
     
         freq_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
@@ -251,9 +300,9 @@ input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runn
                         height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency (rpm)',freq_list)])
 
 update_dimensions = Button(root, text = "Update Tank Dimensions \n or Motor Specs", font= runningTideFont, width= 115,
-                        height= 26, bg = "#6CD300", fg = "black", command=test)
+                        height= 26, bg = "#6CD300", fg = "black", command=update_long_params_w)
 
-run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)", font= runningTideFont, width= 115,
+run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(tank_len) + "m", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command=test)
 
 # set Button grid
