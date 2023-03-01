@@ -22,6 +22,7 @@ index = count()
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
 tank_len=0 #default length
+turn_motor_on(0); #off by default
 
 def animate(i):
     data = pd.read_csv('data.csv')
