@@ -8,7 +8,7 @@ class dac_ops:
     def find_voltage(freq):
         max_rpm=6000/46
         out_v=freq/max_rpm*4096
-        out_v=int(round(out_v*10/6.66))
+        out_v=int(round(out_v))
         return out_v
 
     def dac_write(freq):
