@@ -13,13 +13,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import create_nLf_LUT as create_csv
-
 #from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
-
-x_vals = []
-y_vals = []
 
 index = count()
 
@@ -61,10 +57,13 @@ def update_run_button(): #Updates the "Run Tank" button to reflect the updated f
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m)"
     
 def set_amp_value(): #Sets the new freq when enter button is pressed
-    selection_tuple = amp_listbox.curselection()
+    global amp
+    selection_tuple = freq_listbox.curselection()
     selection_index = selection_tuple[0]
-    amp = selection_index
+    amp_tuple = freq_listbox.get(selection_index)
+    amp = float(amp_tuple[0])
     print(amp)
+    update_run_button()
     
 def read_nLf():
     #Creates CSV of allowed frequencies
@@ -81,8 +80,12 @@ def read_nLf():
     
     return freq_list, mode_list, length_list
 
-def amp_and_freq_w(freq_or_amp,list_values):
-    global freq_listbox, amp_listbox
+#Initializing available frequencies, modes, and tank lengths for given
+#long term parameters
+[freq_list, mode_list, length_list]=read_nLf()
+
+def amp_and_freq_w(freq_or_amp, list_values):
+    global freq_listbox, amp_listbox, freq_list, mode_list, length_list
     
     ########## Making the freq and amp input window ############
     freq_and_amp_w = Toplevel(root, bg="#6CD300")
@@ -109,11 +112,18 @@ def amp_and_freq_w(freq_or_amp,list_values):
     l1 = Label(freq_frame, text = titlestr, font=freq_title_font, bg="#6CD300", height=2)
     l1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, ipadx=5, ipady=5)
 
-    freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value()])
-    freq_enter.grid(row=0, column=0)
+    if freq_or_amp == 'frequency (rpm)':
+        freq_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_freq_value(), amp_and_freq_w('amplitude (in)', freq_list)])
+        freq_enter.grid(row=0, column=0)
     
-    freq_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
-    freq_back.grid(row=1, column=0, sticky='ew')
+        freq_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
+        freq_back.grid(row=1, column=0, sticky='ew')
+    else:
+        amp_enter = Button(buttons_frame, text = "Enter", font=enter_font, bg = "#D2FA04", fg = "black", command= lambda:[set_amp_value()])
+        amp_enter.grid(row=0, column=0)
+    
+        amp_back = Button(buttons_frame, text = "Back", font=back_font, bg = "#FF0303", fg = "black", command=freq_and_amp_w.destroy)
+        amp_back.grid(row=1, column=0, sticky='ew')
 
     freq_listbox = Listbox(freq_frame, activestyle=NONE, selectmode=SINGLE, selectbackground="#D2FA04", font=listbox_font, height= 13)
     freq_scrollbar = ttk.Scrollbar(freq_frame, orient='vertical', command=freq_listbox.yview)
@@ -131,26 +141,6 @@ def amp_and_freq_w(freq_or_amp,list_values):
     for value in list_values:
         freq_listbox.insert(END, value)        
     freq_scrollbar.config(command=freq_listbox.yview)
-    ############ Amp Scrollbar creation and labeling ################
-      
-    # amp_frame = Frame(freq_and_amp_w)
-
-    # amp_scrollbar = Scrollbar(amp_frame, orient='vertical')
-
-    # amp_listbox = Listbox(amp_frame, selectmode=SINGLE, width=50, yscrollcommand=amp_scrollbar.set)
-    # amp_listbox.pack(side = LEFT, fill = BOTH)
-      
-    # amp_scrollbar.pack(side = RIGHT, fill = Y)
-    # amp_frame.pack()
-    # l2 = Label(freq_and_amp_w, text = "Select Desired Amplitude")
-    # l2.pack()
-
-    # amp_enter = Button(freq_and_amp_w, text = "Enter", width=15,
-    #              height=2, bg = "#6CD300", fg = "black", command=set_amp_value)
-    # amp_enter.pack()
-
-    # for values in range(100):
-    #     amp_listbox.insert(END, values)
         
 def resize(e): #Resizes buttons and their fonts when window size changes
      
@@ -210,12 +200,10 @@ enter_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
 back_font = font.Font(family='Helvetica Neue', size=60, weight='bold')
 freq_title_font = font.Font(family='Helvetica Neue', size=32, weight='bold')
 
-[freq_list, mode_list, length_list]=read_nLf()
-
 ############ Making Buttons ####################
 
-plot = Button(root, text = "Plot", font= runningTideFont, width= 115,
-             height= 26, bg = "#6CD300", fg = "black", command=test)
+plot = Button(root, text = "Stop Tank", font= runningTideFont, width= 115,
+             height= 26, bg = "#6CD300", fg = "red", command=test)
 
 input_freq_amp = Button(root, text = "Input Frequency/ \n Amplitude", font= runningTideFont, width= 115,
                         height= 26, bg = "#6CD300", fg = "black", command= lambda: [amp_and_freq_w('frequency (rpm)',freq_list)])
