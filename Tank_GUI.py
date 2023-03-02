@@ -22,7 +22,7 @@ index = count()
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
 tank_len=0 #default length
-turn_motor_on(0); #off by default
+dac_ops.dac_write(0) #motor off by default
 
 def animate(i):
     data = pd.read_csv('data.csv')
@@ -308,7 +308,7 @@ run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n
                         height= 26, bg = "#6CD300", fg = "black", command= lambda: [turn_motor_on(freq)])
 
 # set Button grid
-plot.grid(column=1, row=1, sticky="NSEW" )
+stop.grid(column=1, row=1, sticky="NSEW" )
 input_freq_amp.grid(column=0, row=0, sticky="NSEW")
 update_dimensions.grid(column=0, row=1, sticky="NSEW")
 run_tank.grid(column=1, row=0, sticky="NSEW")
