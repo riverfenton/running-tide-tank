@@ -56,7 +56,7 @@ def set_freq_value(length_list): #Sets the new freq when enter button is pressed
     update_run_button()
     
 def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
-    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(tank_len) + "m"
+    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(round(tank_len*39.37,2)) + "in"
     
 def set_amp_value(): #Sets the new freq when enter button is pressed
     global amp
