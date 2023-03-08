@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import create_nLf_LUT as create_csv
-from dac import dac_ops
+#from dac import dac_ops
  
 plt.style.use('fivethirtyeight')
 
@@ -22,7 +22,7 @@ index = count()
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
 tank_len=0 #default length
-dac_ops.dac_write(0) #motor off by default
+#dac_ops.dac_write(0) #motor off by default
 
 def animate(i):
     data = pd.read_csv('data.csv')
@@ -68,10 +68,11 @@ def set_amp_value(): #Sets the new freq when enter button is pressed
     update_run_button()
     
 def turn_motor_on(f):
-    dac_ops.dac_write(f)
+    #dac_ops.dac_write(f)
+    print('')
     
 def update_long_params():
-    global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var, freq_list, mode_list, length_list
+    global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var, freq_list, mode_list, length_list, amp_list
     water_height = str(water_height_var.get())
     tank_length = str(tank_length_var.get())
     track_length = str(track_length_var.get())
@@ -92,7 +93,7 @@ def update_long_params():
         f.write(param + '\n')
     
     f.close()
-    [freq_list, mode_list, length_list]=read_nLf()
+    [freq_list, mode_list, length_list, amp_list]=read_nLf()
     
 def read_nLf():
     #Creates CSV of allowed frequencies
@@ -107,11 +108,14 @@ def read_nLf():
     freq_list=round(freq_list, 2)
     freq_list=freq_list.values.tolist()
     
-    return freq_list, mode_list, length_list
+    amp_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[3])
+    amp_list=amp_list.values.tolist()
+    
+    return freq_list, mode_list, length_list, amp_list
 
 #Initializing available frequencies, modes, and tank lengths for given
 #long term parameters
-[freq_list, mode_list, length_list]=read_nLf()
+[freq_list, mode_list, length_list,amp_list]=read_nLf()
 
 def update_long_params_w():
     global water_height_var, tank_length_var, track_length_var, num_length_settings_var, min_modes_var, max_modes_var
