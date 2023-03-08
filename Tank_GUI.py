@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jan 26 18:25:24 2023
-
 @author: rfent
 """
 import tkinter
