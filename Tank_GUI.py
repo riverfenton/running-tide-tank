@@ -13,11 +13,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import create_nLf_LUT as create_csv
+from fileOperations import fileOperations
+import numpy as np
 #from dac import dac_ops
 
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
+mode = 0 #default mode
 tank_len=0 #default length
+stroke_len=0 #default stroke
+
 #dac_ops.dac_write(0) #Makes sure motor is off by default
 
 #EXPERIMENTAL: Could be used to read in a CSV data of desired data and display
@@ -48,35 +53,48 @@ def test():
 #Sets the new freq when enter button is pressed. Takes in list of adjustable
 #back wall lengths that is populated in the CSV file created by read_nLf()
 def set_freq_value(length_list):
-    global freq, tank_len
+    global freq, tank_len, allowable_stroke, allowable_amp, mode
     
     selection_tuple = listbox.curselection()
     selection_index = selection_tuple[0]
     freq_tuple = listbox.get(selection_index)
     freq = float(freq_tuple[0])
+    mode=mode_list[selection_index]
     tank_len=length_list[selection_index]
     tank_len=round(tank_len[0],2)
+    [allowable_stroke, allowable_amp]=gen_amp_sel_list(amp_list, selection_index)
     
     update_run_button() #Makes sure the run button reflects new freq selection
+    
+def gen_amp_sel_list(amp_list, selection_index):
+    whole_TF=amp_list[selection_index]
+    [_, _, _, _, _, _, _, crank_shaft, num_stroke]=fileOperations.load_params()
+    allowable_stroke=np.linspace(0,crank_shaft,num_stroke)
+    allowable_amp=np.around(allowable_stroke*whole_TF,2)
+    
+    return allowable_stroke, allowable_amp
 
 #Updates the "Run Tank" button to reflect the updated freq/amp values.
 def update_run_button(): 
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp="\
-        + str(amp) + "in) \n Tank length should be \n set to "\
-            + str(round(tank_len*39.37,2)) + "in"
+        + str(amp) + "in) \n Tank length: "\
+            + str(round(tank_len*39.37,2)) + "in \n" + "Stroke Length:" + \
+            str(stroke_len) + "in \n" + "Mode: " + str(int(mode[0]))
     
 #Sets the new freq when enter button is pressed
 def set_amp_value(): 
-    global amp
+    global amp, allowable_stroke, stroke_len
     
     selection_tuple = listbox.curselection()
     selection_index = selection_tuple[0]
     amp_tuple = listbox.get(selection_index)
-    amp = float(amp_tuple[0])
+    amp = float(amp_tuple)
     print(amp)
+    stroke_len=allowable_stroke[selection_index]
     
     update_run_button() #Makes sure the run button reflects the new amp
                         #selection
+                        
     
 #Turns the motor on (or off if f=0) with desired freq by writing to the DAC
 def turn_motor_on(f):
@@ -95,7 +113,7 @@ def turn_motor_on(f):
 def update_long_params():
     global water_height_var, tank_length_var, track_length_var, \
         num_length_settings_var, min_modes_var, max_modes_var, freq_list, \
-            mode_list, length_list
+            mode_list, length_list, amp_list
             
     water_height = str(water_height_var.get())
     tank_length = str(tank_length_var.get())
@@ -120,7 +138,7 @@ def update_long_params():
     f.close()
     
     #Problem is here. Doesn't seem to update the CSV file as desired.
-    [freq_list, mode_list, length_list]=read_nLf()
+    [freq_list, mode_list, length_list, amp_list]=read_nLf()
     
 #Creates CSV of allowed frequencies based on long-term parameters.
 def read_nLf():
@@ -135,11 +153,15 @@ def read_nLf():
     freq_list=round(freq_list, 2)
     freq_list=freq_list.values.tolist()
     
-    return freq_list, mode_list, length_list
+    amp_list = pd.read_csv('nLfA_sort.csv', header=None, usecols=[3])
+    amp_list=round(amp_list, 2)
+    amp_list=amp_list.values.tolist()
+    
+    return freq_list, mode_list, length_list, amp_list
 
 #Initializing available frequencies, modes, and tank lengths for given
 #long term parameters
-[freq_list, mode_list, length_list]=read_nLf()
+[freq_list, mode_list, length_list, amp_list]=read_nLf()
 
 #EXPERIMENTAL: This window will eventually be responsible for letting the user
 #update the long-term parameters. It is currently under development, as
@@ -231,7 +253,7 @@ def update_long_params_w():
 #whether the window should be for amplitude or frequency and takes in the list
 #of values to be used in populating the listbox
 def amp_and_freq_w(freq_or_amp, list_values):
-    global listbox, amp_listbox, freq_list, mode_list, length_list
+    global listbox, freq_list, mode_list, length_list
     
     ########## Making the freq and amp input window ############
     freq_and_amp_w = Toplevel(root, bg="#6CD300")
@@ -274,7 +296,7 @@ def amp_and_freq_w(freq_or_amp, list_values):
                             bg = "#D2FA04", fg = "black", command= \
                                 lambda:[set_freq_value(length_list), \
                                         amp_and_freq_w('amplitude (in)', \
-                                                       freq_list)])
+                                                       allowable_amp)])
         freq_enter.grid(row=0, column=0)
     
         #Creates back button which exits out of the window and leads back to 
@@ -399,10 +421,10 @@ update_dimensions = Button(root, \
                                        fg="black",command=update_long_params_w)
 
 run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + \
-                  "rpm & \n Amp=" + str(amp) + \
-                      "in) \n Tank length should be \n set to " + \
-                          str(tank_len) + "in", font= runningTideFont, \
-                              width= 115, \
+                  "rpm & \n Amp=" + str(amp) + "in) \n Tank length: "\
+                      + str(round(tank_len*39.37,2)) + "in \n" + \
+                      "Stroke Length:" + str(round(stroke_len,2)) + "in \n" + "Mode: "\
+                      + str(mode), font= runningTideFont, width= 115,\
                                   height= 26, bg = "#6CD300", fg = "black", \
                                       command= lambda: [turn_motor_on(freq)])
 

@@ -12,7 +12,6 @@ from frequency_conversions import freq_conv
 import create_nLf_LUT as create_csv
 import pandas as pd
 
-[h, L_max, L_min, num_L, n_min, n_max, paddle, crank_shaft, num_s]=fileOperations.load_params()
 
 def read_nLf():
     #Creates CSV of allowed frequencies
