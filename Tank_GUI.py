@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jan 26 18:25:24 2023
+
 @author: rfent
 """
 import tkinter
@@ -17,11 +18,7 @@ import create_nLf_LUT as create_csv
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
 tank_len=0 #default length
-<<<<<<< HEAD
 #dac_ops.dac_write(0) #Makes sure motor is off by default
-=======
-dac_ops.dac_write(0) #motor off by default
->>>>>>> 3df9071df4c3ef7c62d8278b742e35b9d5842284
 
 #EXPERIMENTAL: Could be used to read in a CSV data of desired data and display
 #it as a pop-up plot. Would need to be bound to a button if implemented.
@@ -60,13 +57,8 @@ def set_freq_value(length_list):
     tank_len=length_list[selection_index]
     tank_len=round(tank_len[0],2)
     
-<<<<<<< HEAD
     update_run_button() #Makes sure the run button reflects new freq selection
-=======
-def update_run_button(): #Updates the "Run Tank" button to reflect the updated freq/amp values.
-    run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp=" + str(amp) + "m) \n Tank length should be \n set to " + str(round(tank_len*39.37,2)) + "in"
->>>>>>> 3df9071df4c3ef7c62d8278b742e35b9d5842284
-    
+
 #Updates the "Run Tank" button to reflect the updated freq/amp values.
 def update_run_button(): 
     run_tank['text'] = "Run Tank \n (With Freq=" + str(freq) + "rpm & \n Amp="\
@@ -414,11 +406,7 @@ run_tank = Button(root, text = "Run Tank \n (With Freq=" + str(freq) + \
                                   height= 26, bg = "#6CD300", fg = "black", \
                                       command= lambda: [turn_motor_on(freq)])
 
-<<<<<<< HEAD
 #Placing buttons in grid
-=======
-# set Button grid
->>>>>>> 3df9071df4c3ef7c62d8278b742e35b9d5842284
 stop.grid(column=1, row=1, sticky="NSEW" )
 input_freq_amp.grid(column=0, row=0, sticky="NSEW")
 update_dimensions.grid(column=0, row=1, sticky="NSEW")
