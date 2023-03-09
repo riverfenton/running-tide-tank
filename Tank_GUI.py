@@ -15,15 +15,14 @@ from matplotlib.animation import FuncAnimation
 import create_nLf_LUT as create_csv
 from fileOperations import fileOperations
 import numpy as np
-#from dac import dac_ops
+from dac import dac_ops
 
 freq = 0 #Default frequency
 amp = 0 #Default amplitude
 mode = 0 #default mode
 tank_len=0 #default length
 stroke_len=0 #default stroke
-
-#dac_ops.dac_write(0) #Makes sure motor is off by default
+dac_ops.dac_write(0) #Makes sure motor is off by default
 
 #EXPERIMENTAL: Could be used to read in a CSV data of desired data and display
 #it as a pop-up plot. Would need to be bound to a button if implemented.
