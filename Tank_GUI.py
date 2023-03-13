@@ -158,7 +158,7 @@ def read_nLf():
     
     return freq_list, mode_list, length_list, amp_list
 
-#Initializing available frequencies, modes, and tank lengths for given
+#Initializing available frequencies, modes, tank lengths, and amplitudes for given
 #long term parameters
 [freq_list, mode_list, length_list, amp_list]=read_nLf()
 
