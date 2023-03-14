@@ -3,6 +3,14 @@ import busio
 
 import adafruit_mcp4725
 
+#dac_write: Write an analog voltage to the motor controller. It takes as its
+    #only input the frequency in rpm
+#find_voltage: used to convert the frequency in rpm to the integer value to
+    #give to the DAC. This calculation takes into account the max_rpm of the
+    #motor, the gearbox ratio, and the fact that we are using 3.3V to power the
+    #DAC instead of 5V, meaning we can only generate up to 6.6V analog output
+    #while the motor will run at max speed at an analog input of 10V 
+
 class dac_ops:
     
     def find_voltage(freq):

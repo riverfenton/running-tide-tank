@@ -5,6 +5,33 @@ Created on Mon Jan  9 16:51:22 2023
 @author: User
 """
 
+#load_params reads from a .txt file and saves the relevant parameter info as
+#variables. This function assumes a very specific form for the .txt file. The
+#lines of the file are as follows:
+    #line 0: depth of water in tank in meters (saved as h)
+    #line 1: maximum length of the tank in meters. Should be measured from the
+        #wall behind the wavemaker paddle to the furthes allowable position of
+        #the back wall (saved as L_max)
+    #line 2: track length in meters. range of backwall motion used to calculate
+        #the variable L_min
+    #line 3: number of allowable length settings (integer). not a physical
+        #parameter, but a number used to determine how much resolution the
+        #options from the frequency drop down menu will have (saved as num_L)
+    #line 4: minimum allowable normal mode (integer). The Dartmouth engineering
+        #team had trouble generating waves in the first mode, so we suggest
+        #this number to 2 (saved as n_min)
+    #line 5: maximum allowable normal mode (integer). The Dartmouth engineering
+        #team found that anywhere above 80 rpm the waves become excessively
+        #chaotic, so restricing the max normal mode to 4 removes this
+        #possibility for the most part (saved as n_max)
+    #line 6: height of the wave generating paddle in meters (saved as paddle)
+    #line 7: maximum extension of the crank shaft mechanism measured in inches
+        #(saved as crank_shaft)
+    #line 8: number of allowable stroke settings (integer). similar to num_L,
+        #this is used to control the resolution of the dropdown menu, though in
+        #this case for amplitude (saved as num_s)
+        
+
 class fileOperations:
     
     def load_params():

@@ -5,6 +5,15 @@ Created on Sun Jan  8 15:24:28 2023
 @author: User
 """
 
+#the purpose of this script is to generate the look up tables used in the the
+#frequency and amplitude dropdown menus. It uses filOperations.load_params() to
+#pull the necessary parameters to perform the calculation, then uses TFs.TF_res
+#and TFs.TF_tank to perform the calculations. It then saves a CSV file. Each 
+#row of the csv contains (in order) the normal mode number, the tank length 
+#(meters), the frequency (rpm), and the ratio of stroke length to wave height
+#at that frequency. The csv is sorted in ascending order according to frequency
+
+
 import numpy as np
 from TFs import TFs
 from fileOperations import fileOperations
@@ -30,9 +39,9 @@ for i in range(len(L)): #calculating the values for f in the nLf matrix
     nLfA[lower_ind:upper_ind,1]=L[i]
     nLfA[lower_ind:upper_ind,2]=freq_conv.w_2_rpm(w)
     nLfA[lower_ind:upper_ind,3]=np.multiply(H_res,H_tank)*2/s_ratio
-    #this last line takes into accont wave superposition (*H_tank), the fact that
-    #the crank shaft radius creates a stroke equal to its diameter (*2) and the
-    #stroke differnece at water surface compared to motor height(/s_ratio)
+    #this last line takes into accont wave superposition (*H_tank), the fact
+    #that the crank shaft radius creates a stroke equal to its diameter (*2)
+    #and the stroke differnece at water surface compared to motor height(/s_ratio)
     
 indcs=np.argsort(nLfA[:,2]) #find the indices that sort nLf according to freq
 
